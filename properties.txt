@@ -1,0 +1,36 @@
+# Input and output file names
+O = output.csv # Output file name, where full interpretation of mass spectra will be written
+O1 = out1.csv # Shortened output file: one molecule - one line.
+fileFormat = CSV # Format of input spectra
+inputFile = input.csv # Input file name
+prefix = ./ # Prefix (path) where the spectrum files listed in the input file are located. Only for those file formats where one spectrum is one file.
+
+# Explanation of mass spectral peaks (high resolution)
+mzThreshold = 0.0006 # Accuracy of mass determination, Da
+resolution = 30000  # HRMS resolution
+percentDifferenceForIsotopic = 10 #  The relative (percent!) error in the intensity of an isotopic peak at which it is considered "perfect"
+absoluteDifferenceForIsotopic = 15 #  The absolute (base peak = 999) error in the intensity of an isotopic peak at which it is considered "perfect"
+# if observed intensity = X and theoretical = Y, the isotopic peak is "perfect" if  100*(X-Y)/Y  <  percentDifferenceForIsotopic *OR* if  (X-Y) <  absoluteDifferenceForIsotopic
+intensityThreshold = 5 #  The intensity of an isotopic peak below which we do not attempt to search for an isotopic peak (base peak = 999)
+
+# Atom migrations
+maxHDrift = 2 # maximum number of H-atoms that can migrate TO ion
+maxHLoss = 3 # maximum additional loss of H-atoms
+maxFMigration = 2 # max number of fluorine atoms that can migrate
+
+# Explaining molecular ion peak
+maxHLostMI = 2 # Consider M, M-H, M-2H when considering molecular ion
+fractionIsotopicThreshold = 0.96 #  The fraction of isotopic peak intensities that must be well explained when explaining the molecular ion peak
+
+# General mass spectrometry settings
+csvLoadIntensityThreshold = 1  # threshold, peaks with intensity below which are discarded during the initial loading of the spectrum (base peak (peak with maximum intensity) = 999)
+thresholdGenerateIsotopic = 0.0001  # threshold, peaks with intensity below which are discarded when calculating the isotopic distribution. The intensity is calculated from the ENTIRE intensity of the isotopic distribution (not from the base peak).
+
+# CSV file load options
+csvSpectrumHeader = m/z,Intensity # CSV table header, below which are m/z and intensity values. All lines above the header are ignored.
+mzColumn =  0 #  The column number in the CSV table that contains the m/z values. The FIRST column is number 0!
+intensColumn = 1  #  The column number in the CSV table that contains the intensity values. The FIRST column is number 0!
+
+# SMILES By default it should be empty (SMILES =, nothing after "="). If the SMILES string is given, the input file is assumed to contain ONE spectrum of this compound. All structural information in the input files is ignored.
+SMILES =
+name =
