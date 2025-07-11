@@ -41,52 +41,52 @@ The program shows for each peak the minimum number of bond breaks required to ob
 ## 6. Output files
 ### Full output file (per-peak explanation)
 The software generates two files when interpreting a mass spectrum. A full file and a short file. The full file is a CSV file and contains the following fields for each peak
-*mz\_experiment* - observed m/z
-*intensity* - observed intensity
-*explanation\_level* - explanation level 0-3 (see above)
-*formula* - proposed molecular formula
-*mz\_theory* - calculated m/z for proposed formula
-*delta\_mz* - difference between observed and predicted m/z
-*fragmentation\_level* - number of edges in molecular graph that should be broken in order to obtain this fragment. Additional loss of H, Cl, F, Br, I, CH3 is not counted. See above for full description
-*fraction\_intensity* - what fraction of the total ion current does this peak constitute? (percents)
-*fraction\_isotopic\_explained* - the sum of the intensities of isotopic peaks (relative to the theoretical intensity of all isotopic peaks) that were successfully found (percents, %)
-*isotopic\_distribution\_theory* - isotopic distribution for proposed formula
+* *mz\_experiment* - observed m/z
+* *intensity* - observed intensity
+* *explanation\_level* - explanation level 0-3 (see above)
+* *formula* - proposed molecular formula
+* *mz\_theory* - calculated m/z for proposed formula
+* *delta\_mz* - difference between observed and predicted m/z
+* *fragmentation\_level* - number of edges in molecular graph that should be broken in order to obtain this fragment. Additional loss of H, Cl, F, Br, I, CH3 is not counted. See above for full description
+* *fraction\_intensity* - what fraction of the total ion current does this peak constitute? (percents)
+* *fraction\_isotopic\_explained* - the sum of the intensities of isotopic peaks (relative to the theoretical intensity of all isotopic peaks) that were successfully found (percents, %)
+* *isotopic\_distribution\_theory* - isotopic distribution for proposed formula
 
 For ions [M+], [M-H+], [M-2H+] additional data are provided. For the main peaks of the isotopic distribution the following fields are provided:
-*m/z theor* - predicted m/z
-*isotopic fraction* - the fraction of the "main" isotopomer among the sum of all isotopomers
-*m/z found* - observed m/z
-*intensity* - observed intensity
-*isotopic intensity perfectly found* - the fraction of the sum of the intensities of those peaks in the isotopic distribution that are "perfectly" found (m/z coincides with an accuracy of up to mzThreshold, the intensity coincides with the required accuracy) in the sum of all (theoretically predicted) peaks of the isotopic distribution.
+* *m/z theor* - predicted m/z
+* *isotopic fraction* - the fraction of the "main" isotopomer among the sum of all isotopomers
+* *m/z found* - observed m/z
+* *intensity* - observed intensity
+* *isotopic intensity perfectly found* - the fraction of the sum of the intensities of those peaks in the isotopic distribution that are "perfectly" found (m/z coincides with an accuracy of up to mzThreshold, the intensity coincides with the required accuracy) in the sum of all (theoretically predicted) peaks of the isotopic distribution.
 
 For isotopic peaks the  following fields are provided:
-*m/z theor* - predicted m/z
-*isotopic fraction* - the fraction of the "main" isotopomer among the sum of all isotopomers
-*m/z found* - observed m/z
-*intensity* - observed intensity
+* *m/z theor* - predicted m/z
+* *isotopic fraction* - the fraction of the "main" isotopomer among the sum of all isotopomers
+* *m/z found* - observed m/z
+* *intensity* - observed intensity
 
 Also at the end of the explanation for each spectrum all peaks (including those that do not coincide at all in exact mass) near the molecular ion are given. This allows manual interpretation.
 
 ### Short output file (per-spectrum explanation)
-*The short file is also CSV file and contains the following fields for each mass spectrum*
-*Name* - Compound name
-*File name* - Name of file with spectrum (for TXT, CSV file formats)
-*SMILES* - SMILES string (structure)
-*Molecular ion level* - The highest level of explanation for ions. If it is equal to 3, then at least one of these ions is observed "perfectly" - all isotopic peaks have the "correct" m/z and intensities. If it is equal to 2, then at least one of these ions is observed (m/z matches the observed one up to mzThreshold) and the isotopic distribution does not contradict the observed one. If it is equal to 1, then at least one of these ions is successfully observed (exact m/z).
-*Molecular ion (or M-xH) presents?* - 0 - if there are no peaks at all in the region near the molecular ion. 1 - otherwise.
-*Fraction above molecular* -  the fraction of the total ion current in area significantly (>1.5 Da) above the heaviest isotopic peak of the molecular ion; the value significantly greater than zero indicates an impurity or incorrect identification. 
-*2 bonds broken, Level3* - % of total ion current explained at level 3 if only 2 bond cleavages are considered
-*2 bonds broken, Level2* - % of total ion current explained at level 2 if only 2 bond cleavages are considered 
-*2 bonds broken, Level1* - % of total ion current explained at level 1 if only 2 bond cleavages are considered 
-*3 bonds broken, Level3* - % of total ion current explained at level 3 if only 3 bond cleavages are considered 
-*3 bonds broken, Level2* - % of total ion current explained at level 2 if only 3 bond cleavages are considered 
-*3 bonds broken, Level1* - % of total ion current explained at level 1 if only 3 bond cleavages are considered 
-*All possible fragments, Level3* - % of total ion current explained at level 1 if all possible molecular formulas are considered 
-*All possible fragments, Level2* - % of total ion current explained at level 1 if all possible molecular formulas are considered 
-*All possible fragments, Level1* - % of total ion current explained at level 1 if all possible molecular formulas are considered
-*Molecular ion explanation level [M+]* - explanation level (see above)
-*Molecular ion explanation level [M-H+]* - explanation level (see above)
-*Molecular ion explanation level [M-2H+]* - explanation level (see above) 
+* *The short file is also CSV file and contains the following fields for each mass spectrum*
+* *Name* - Compound name
+* *File name* - Name of file with spectrum (for TXT, CSV file formats)
+* *SMILES* - SMILES string (structure)
+* *Molecular ion level* - The highest level of explanation for ions. If it is equal to 3, then at least one of these ions is observed "perfectly" - all isotopic peaks have the "correct" m/z and intensities. If it is equal to 2, then at least one of these ions is observed (m/z matches the observed one up to mzThreshold) and the isotopic distribution does not contradict the observed one. If it is equal to 1, then at least one of these ions is successfully observed (exact m/z).
+* *Molecular ion (or M-xH) presents?* - 0 - if there are no peaks at all in the region near the molecular ion. 1 - otherwise.
+* *Fraction above molecular* -  the fraction of the total ion current in area significantly (>1.5 Da) above the heaviest isotopic peak of the molecular ion; the value significantly greater than zero indicates an impurity or incorrect identification. 
+* *2 bonds broken, Level3* - % of total ion current explained at level 3 if only 2 bond cleavages are considered
+* *2 bonds broken, Level2* - % of total ion current explained at level 2 if only 2 bond cleavages are considered 
+* *2 bonds broken, Level1* - % of total ion current explained at level 1 if only 2 bond cleavages are considered 
+* *3 bonds broken, Level3* - % of total ion current explained at level 3 if only 3 bond cleavages are considered
+* *3 bonds broken, Level2* - % of total ion current explained at level 2 if only 3 bond cleavages are considered 
+* *3 bonds broken, Level1* - % of total ion current explained at level 1 if only 3 bond cleavages are considered 
+* *All possible fragments, Level3* - % of total ion current explained at level 1 if all possible molecular formulas are considered 
+* *All possible fragments, Level2* - % of total ion current explained at level 1 if all possible molecular formulas are considered 
+* *All possible fragments, Level1* - % of total ion current explained at level 1 if all possible molecular formulas are considered
+* *Molecular ion explanation level [M+]* - explanation level (see above)
+* *Molecular ion explanation level [M-H+]* - explanation level (see above)
+* *Molecular ion explanation level [M-2H+]* - explanation level (see above) 
 
 ## 7. Input files
 The following CSV file can be used as input files:
@@ -132,41 +132,42 @@ propertyName2 = propertyValue2
 Comments are allowed. Everything after the # sign is ignored. In the case of property values ​​(file names) containing spaces or =, quotation marks are not required. In the case of values ​​with the # sign, the values ​​must be enclosed in quotation marks. In the case of the command line interface, the properties are set as follows "--propertyName value". Default property values ​​are taken from the properties.txt file, if an additional properties file is specified, it will override the default values. Values ​​specified via the command line have even higher priority. All possible properties:
 
 ### Input and output file names
-O = output.csv # Output file name, where full interpretation of mass spectra will be written
-O1 = out1.csv # Shortened output file: one molecule - one line.
-fileFormat = CSV # Format of input spectra: CSV, MSP (single-molecule), TXT, MSP1 (multi-molecule MSP with structural information included), SDF (multi-molecule, both mass spectra and structures)
-inputFile = input.csv # Input file name. For MSP1 and SDF - file with mass spetra and structures. For other file formats: CSV file with mass spectra files and corresponding SMILES strings (see above) if property SMILES is not specified. Otherwise, single-molecule file with mass spectrum.
-prefix = ./ # Prefix (path) where the spectrum files listed in the input file are located. Only for those file formats where one spectrum is one file.
+**O = output.csv**  Output file name, where full interpretation of mass spectra will be written
+**O1 = out1.csv**  Shortened output file: one molecule - one line.
+**fileFormat = CSV**  Format of input spectra: CSV, MSP (single-molecule), TXT, MSP1 (multi-molecule MSP with structural information included), SDF (multi-molecule, both mass spectra and structures)
+**inputFile = input.csv**  Input file name. For MSP1 and SDF - file with mass spetra and structures. For other file formats: CSV file with mass spectra files and corresponding SMILES strings (see above) if property SMILES is not specified. Otherwise, single-molecule file with mass spectrum.
+**prefix = ./**  Prefix (path) where the spectrum files listed in the input file are located. Only for those file formats where one spectrum is one file.
 
 ### Explanation of mass spectral peaks (high resolution)
-mzThreshold = 0.0006 # Accuracy of mass determination, Da
-resolution = 30000  # HRMS resolution
-percentDifferenceForIsotopic = 10 #  The relative (percent!) error in the intensity of an isotopic peak at which it is considered "perfect"
-absoluteDifferenceForIsotopic = 15 #  The absolute (base peak = 999) error in the intensity of an isotopic peak at which it is considered "perfect"
-*if observed intensity = X and theoretical = Y, the isotopic peak is "perfect" if  100\*(X-Y)/Y  <  percentDifferenceForIsotopic OR if  (X-Y) <  absoluteDifferenceForIsotopic*
-intensityThreshold = 5 #  The intensity of an isotopic peak below which we do not attempt to search for an isotopic peak (base peak = 999)
+**mzThreshold = 0.0006**  Accuracy of mass determination, Da
+**resolution = 30000**   HRMS resolution
+**percentDifferenceForIsotopic = 10**   The relative (percent!) error in the intensity of an isotopic peak at which it is considered "perfect"
+**absoluteDifferenceForIsotopic = 15**   The absolute (base peak = 999) error in the intensity of an isotopic peak at which it is considered "perfect"
+if observed intensity = X and theoretical = Y, the isotopic peak is "perfect" if  100\*(X-Y)/Y  <  percentDifferenceForIsotopic OR if  (X-Y) <  absoluteDifferenceForIsotopic
+**intensityThreshold = 5**   The intensity of an isotopic peak below which we do not attempt to search for an isotopic peak (base peak = 999)
 
 ### Atom migrations
-maxHDrift = 2 # maximum number of H-atoms that can migrate TO ion
-maxHLoss = 3 # maximum additional loss of H-atoms
-maxFMigration = 2 # max number of fluorine atoms that can migrate
+**maxHDrift = 2**  maximum number of H-atoms that can migrate TO ion
+**maxHLoss = 3**  maximum additional loss of H-atoms
+**maxFMigration = 2**  max number of fluorine atoms that can migrate
 
 ### Explaining molecular ion peak
-maxHLostMI = 2 # Consider M, M-H, M-2H when considering molecular ion. It is not recommended to change.
-fractionIsotopicThreshold = 0.96 #  The fraction of isotopic peak intensities that must be well explained when explaining the molecular ion peak
+**maxHLostMI = 2**  Consider M, M-H, M-2H when considering molecular ion. It is not recommended to change.
+**fractionIsotopicThreshold = 0.96**   The fraction of isotopic peak intensities that must be well explained when explaining the molecular ion peak
 
 ### General mass spectrometry settings
-csvLoadIntensityThreshold = 1  # threshold, peaks with intensity below which are discarded during the initial loading of the spectrum (base peak (peak with maximum intensity) = 999)
-thresholdGenerateIsotopic = 0.0001  # threshold, peaks with intensity below which are discarded when calculating the isotopic distribution. The intensity is calculated from the ENTIRE intensity of the isotopic distribution (not from the base peak). It is not recommended to change.
+**csvLoadIntensityThreshold = 1**   threshold, peaks with intensity below which are discarded during the initial loading of the spectrum (base peak (peak with maximum intensity) = 999)
+**thresholdGenerateIsotopic = 0.0001**   threshold, peaks with intensity below which are discarded when calculating the isotopic distribution. The intensity is calculated from the ENTIRE intensity of the isotopic distribution (not from the base peak). It is not recommended to change.
 
 ### CSV file load options
-csvSpectrumHeader = m/z,Intensity # CSV table header, below which are m/z and intensity values. All lines above the header are ignored.
-mzColumn =  0 #  The column number in the CSV table that contains the m/z values. The FIRST column is number 0!
-intensColumn = 1  #  The column number in the CSV table that contains the intensity values. The FIRST column is number 0!
+**csvSpectrumHeader = m/z,Intensity**  CSV table header, below which are m/z and intensity values. All lines above the header are ignored.
+**mzColumn =  0**   The column number in the CSV table that contains the m/z values. The FIRST column is number 0!
+**intensColumn = 1**    The column number in the CSV table that contains the intensity values. The FIRST column is number 0!
 
-### SMILES By default it should be empty (SMILES =, nothing after "="). If the SMILES string is given, the input file is assumed to contain ONE spectrum of this compound. All structural information in the input files is ignored.
-SMILES =
-name =  
+### Single-molecule runs
+**SMILES =**
+**name =**
+SMILES by default it should be empty (SMILES =, nothing after "="). If the SMILES string is given, the input file is assumed to contain ONE spectrum of this compound. All structural information in the input files is ignored.
 
 
 ## 10. Command line interface
@@ -240,5 +241,5 @@ CSV file load options
 ```
 ## 11. Graphical user interface
 
-There are also two versions of the graphical user interface available: batch\_gui and simple\_gui. In simple\_gui, the mass spectrum must be copied in TXT format (alternating m/z and intensity values ​​separated by newlines, spaces, semicolons, brackets, colons). All parameters and settings are described above. Graphical user interfaces are self-explainatory.
+There are also two versions of the graphical user interface available: simple\_gui and batch\_gui. In simple\_gui, the mass spectrum must be copied in TXT format (alternating m/z and intensity values ​​separated by newlines, spaces, semicolons, brackets, colons). All parameters and settings are described above. Graphical user interfaces are self-explainatory.
 ![image](fig2.png)
