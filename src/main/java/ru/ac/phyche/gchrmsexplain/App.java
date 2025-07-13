@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -372,8 +373,8 @@ public class App {
 			}
 		}
 		String defaultPropFile = "./properties.txt";
-		//File jarPath = new File(App.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-		//defaultPropFile = (new File(jarPath,defaultPropFile)).getAbsolutePath();
+		File jarPath = (new File(URLDecoder.decode(App.class.getProtectionDomain().getCodeSource().getLocation().getPath(),"UTF-8"))).getParentFile();
+		defaultPropFile = (new File(jarPath,defaultPropFile)).getAbsolutePath();
 		HashMap<String, String> properties = loadProperties(null, defaultPropFile);
 		String propFile = null;
 		for (int i = 0; i < args.length; i++) {
