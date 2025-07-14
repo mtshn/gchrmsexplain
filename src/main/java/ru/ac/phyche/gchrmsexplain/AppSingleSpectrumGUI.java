@@ -53,7 +53,7 @@ public class AppSingleSpectrumGUI {
 		HashMap<String, String> properties = App.loadProperties(args);
 
 		JFrame frame = new JFrame("GC-HRMS mass spectrum interpreter");
-		Image image = new ImageIcon("icon.png").getImage();
+		Image image = new ImageIcon(AppBatchGUI.iconPNGPath()).getImage();
 		frame.setIconImage(image);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(600, 400);
