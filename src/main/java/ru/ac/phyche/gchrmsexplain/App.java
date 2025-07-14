@@ -26,10 +26,10 @@ import org.openscience.cdk.tools.CDKHydrogenAdder;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 /**
- * Сommand line interface program for interpretation of high resolution gc-ms mass spectra.
- * Dmitriy D. Matyushin, Anastasia Yu. Sholokhova, 2025
- * See for details comments in MassSpectrumHR and ExplainMassSpectrumHR classes.
- * Run with "--help" key in order to see options.
+ * Сommand line interface program for interpretation of high resolution gc-ms
+ * mass spectra. Dmitriy D. Matyushin, Anastasia Yu. Sholokhova, 2025 See for
+ * details comments in MassSpectrumHR and ExplainMassSpectrumHR classes. Run
+ * with "--help" key in order to see options.
  */
 public class App {
 
@@ -342,6 +342,26 @@ public class App {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param filename name of file (something.txt)
+	 * @return full path /path/to/something.txt if actually something.txt is located
+	 *         in the same folder where currently running JAR file is located
+	 * @throws IOException io
+	 */
+	public static String fileNameToPathSameDirAsJARLocated(String filename) {
+		try {
+			String defaultPropFile = "./properties.txt";
+			File jarPath = (new File(URLDecoder
+					.decode(App.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8")))
+					.getParentFile();
+			return (new File(jarPath, defaultPropFile)).getAbsolutePath();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
 	public static HashMap<String, String> loadProperties(String args[]) throws IOException {
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-h") || args[i].equals("-help") || args[i].equals("--help") || args[i].equals("-?")
@@ -373,8 +393,7 @@ public class App {
 			}
 		}
 		String defaultPropFile = "./properties.txt";
-		File jarPath = (new File(URLDecoder.decode(App.class.getProtectionDomain().getCodeSource().getLocation().getPath(),"UTF-8"))).getParentFile();
-		defaultPropFile = (new File(jarPath,defaultPropFile)).getAbsolutePath();
+		defaultPropFile = App.fileNameToPathSameDirAsJARLocated(defaultPropFile);
 		HashMap<String, String> properties = loadProperties(null, defaultPropFile);
 		String propFile = null;
 		for (int i = 0; i < args.length; i++) {
@@ -414,21 +433,16 @@ public class App {
 	}
 
 	public static void printHelp() {
-		System.out.println("usage: --option1 <argument1> --option1 <argument1> ...\n"+"Options:\n"
+		System.out.println("usage: --option1 <argument1> --option1 <argument1> ...\n" + "Options:\n"
 				+ "--propFile   file with properties. All other options can be also set there.\n"
-				+ "             by default properties.txt file is used.\n"
-				+ "\n"
+				+ "             by default properties.txt file is used.\n" + "\n"
 				+ "--SMILES     SMILES string (structures can also be provided in input file)\n"
-				+ "--name       compound name (structures can also be provided in input file)\n"
-				+ "\n"
+				+ "--name       compound name (structures can also be provided in input file)\n" + "\n"
 				+ "-O           output file name, where full interpretation of mass spectra\n"
-				+ "             will be written\n"
-				+ "-O1          shortened output file: one molecule - one line.\n"
-				+ "--fileFormat format of input spectra\n"
-				+ "--inputFile  input file name\n"
+				+ "             will be written\n" + "-O1          shortened output file: one molecule - one line.\n"
+				+ "--fileFormat format of input spectra\n" + "--inputFile  input file name\n"
 				+ "--prefix     prefix (path) where the spectrum files listed in the input file are\n"
-				+ "             located. Only for those file formats where one spectrum is one file.\n"
-				+ "\n"
+				+ "             located. Only for those file formats where one spectrum is one file.\n" + "\n"
 				+ "# Explanation of mass spectral peaks (high resolution)\n"
 				+ "--mzThreshold                      accuracy of mass determination, Da\n"
 				+ "--resolution                       HRMS resolution\n"
@@ -443,21 +457,17 @@ public class App {
 				+ "(X-Y) <  absoluteDifferenceForIsotopic\n"
 				+ "--intensityThreshold = 5            the intensity of an isotopic peak below\n"
 				+ "                                    which we do not attempt to search for an\n"
-				+ "                                    isotopic peak (base peak = 999)\n"
-				+ "\n"
-				+ "# Atom migrations\n"
+				+ "                                    isotopic peak (base peak = 999)\n" + "\n" + "# Atom migrations\n"
 				+ "--maxHDrift                         maximum number of H-atoms that can migrate\n"
 				+ "                                    TO ion\n"
 				+ "--maxHLoss                          maximum additional loss of H-atoms\n"
-				+ "--maxFMigration                     max number of fluorine atoms that can migrate\n"
-				+ "\n"
+				+ "--maxFMigration                     max number of fluorine atoms that can migrate\n" + "\n"
 				+ "# Explaining molecular ion peak\n"
 				+ "--maxHLostMI                        consider M, M-H ... M-xH when considering\n"
 				+ "                                    molecular ion (usually 2)\n"
 				+ "--fractionIsotopicThreshold         The fraction of isotopic peak intensities\n"
 				+ "                                    that must be well explained when explaining\n"
-				+ "                                    the molecular ion peak\n"
-				+ "\n"
+				+ "                                    the molecular ion peak\n" + "\n"
 				+ "# General mass spectrometry settings\n"
 				+ "--csvLoadIntensityThreshold         threshold, peaks with intensity below which\n"
 				+ "                                    are discarded during the initial loading of\n"
@@ -467,8 +477,7 @@ public class App {
 				+ "                                    are discarded when calculating the isotopic\n"
 				+ "                                    distribution. The intensity is calculated\n"
 				+ "                                    from the ENTIRE intensity of the isotopic\n"
-				+ "                                    distribution (not from the base peak).\n"
-				+ "\n"
+				+ "                                    distribution (not from the base peak).\n" + "\n"
 				+ "# CSV file load options\n"
 				+ "--csvSpectrumHeader                 CSV table header, below which are m/z and\n"
 				+ "                                    intensity values. All lines above the header\n"

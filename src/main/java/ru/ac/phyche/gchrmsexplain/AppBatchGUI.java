@@ -34,10 +34,14 @@ public class AppBatchGUI {
 		public abstract HashMap<String, String> extract(HashMap<String, String> properties);
 	}
 
+	public static String iconPNGPath() {
+		return App.fileNameToPathSameDirAsJARLocated("icon.png");
+	}
+
 	public static void showEditorWithHTMLContentFromFile(String header, String fileName) {
 		try {
 			JFrame frame = new JFrame(header);
-			Image image = new ImageIcon("icon.png").getImage();
+			Image image = new ImageIcon(iconPNGPath()).getImage();
 			frame.setIconImage(image);
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.setSize(600, 400);
@@ -62,7 +66,7 @@ public class AppBatchGUI {
 
 	public static void showEditorPaneWindow(String header, String content, boolean isHTML) {
 		JFrame frame = new JFrame(header);
-		Image image = new ImageIcon("icon.png").getImage();
+		Image image = new ImageIcon(iconPNGPath()).getImage();
 		frame.setIconImage(image);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(600, 400);
@@ -87,11 +91,13 @@ public class AppBatchGUI {
 	}
 
 	public static void showHelp() {
-		showEditorWithHTMLContentFromFile("Information about software", "help.html");
+		showEditorWithHTMLContentFromFile("Information about software",
+				App.fileNameToPathSameDirAsJARLocated("help.html"));
 	}
 
 	public static void showHelpFileFormats() {
-		showEditorWithHTMLContentFromFile("Information about software", "fileformats.html");
+		showEditorWithHTMLContentFromFile("Information about software",
+				App.fileNameToPathSameDirAsJARLocated("fileformats.html"));
 
 	}
 
@@ -243,7 +249,7 @@ public class AppBatchGUI {
 		HashMap<String, String> properties = App.loadProperties(args);
 
 		JFrame frame = new JFrame("Batch GC-HRMS mass spectra interpreter");
-		Image image = new ImageIcon("icon.png").getImage();
+		Image image = new ImageIcon(iconPNGPath()).getImage();
 		frame.setIconImage(image);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(600, 400);
