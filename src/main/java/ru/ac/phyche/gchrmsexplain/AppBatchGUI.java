@@ -1,7 +1,6 @@
 package ru.ac.phyche.gchrmsexplain;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -18,11 +17,14 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneLayout;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -70,23 +72,36 @@ public class AppBatchGUI {
 		frame.setIconImage(image);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize(600, 400);
-		Component p = null;
+		JEditorPane p = null;
+		p = new JEditorPane();
 		if (isHTML) {
-			p = new JEditorPane();
-			((JEditorPane) p).setContentType("text/html");
-			((JEditorPane) p).setText(content);
-			((JEditorPane) p).setEditable(false);
+			p.setContentType("text/html");
 		} else {
-			p = new JTextArea();
-			((JTextArea) p).setText(content);
-			((JTextArea) p).setEditable(false);
+			p.setContentType("text/plain");
 		}
-		JScrollPane scrollPane = new JScrollPane(p);
+		p.setText(content);
+		p.setEditable(false);
+
+		JPopupMenu popupMenu = new JPopupMenu();
+		JMenuItem copyMenuItem = new JMenuItem("Copy");
+		JMenuItem selectAllMenuItem = new JMenuItem("Select All");
+		copyMenuItem.addActionListener(new DefaultEditorKit.CopyAction());
+		final JEditorPane p1 = p;
+		selectAllMenuItem.addActionListener(e -> {
+			((JTextComponent) p1).selectAll();
+		});
+		popupMenu.add(copyMenuItem);
+		popupMenu.add(selectAllMenuItem);
+		p.setComponentPopupMenu(popupMenu);
+		
+		JScrollPane scrollPane = new JScrollPane(p1);
 		scrollPane.setLayout(new ScrollPaneLayout());
 		scrollPane.setPreferredSize(new Dimension(600, 400));
-		scrollPane.add(p);
+		scrollPane.add(p1);
 		frame.add(scrollPane);
-		scrollPane.setViewportView(p);
+		scrollPane.setViewportView(p1);
+		p1.setCaretPosition(0);
+		scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMinimum());
 		frame.setVisible(true);
 	}
 
@@ -403,8 +418,8 @@ public class AppBatchGUI {
 				properties1.put("inputFile", tf4.getText());
 				properties1.put("prefix", tf5.getText());
 				properties1.put("csvSpectrumHeader", tf18.getText());
-				properties1.put("mzColumn", "" + (Integer.parseInt(tf19.getText()) + 1));
-				properties1.put("intensColumn", "" + (Integer.parseInt(tf20.getText()) + 1));
+				properties1.put("mzColumn", "" + (Integer.parseInt(tf19.getText()) - 1));
+				properties1.put("intensColumn", "" + (Integer.parseInt(tf20.getText()) - 1));
 				return properties1;
 			}
 		};
@@ -419,10 +434,15 @@ public class AppBatchGUI {
 				p = propertiesExtractOther.extract(p);
 				try {
 					App.run(p);
-					String results = "Brief explanation results \n";
+					String results = "";
+					results += "************************************************************\n";
+					results += "*COPY CONTENT OF THIS FIELD TO MS Excel or LibreOffice Calc*\n";
+					results += "************************************************************\n";
+					results += "Brief explanation results \n";
 					BufferedReader br = new BufferedReader(new FileReader(p.get("O1")));
 					String s1 = br.readLine();
 					while (s1 != null) {
+						s1 = App.csvLineToTSVLine(s1);
 						results += s1 + "\n";
 						s1 = br.readLine();
 					}
@@ -431,6 +451,7 @@ public class AppBatchGUI {
 					BufferedReader br1 = new BufferedReader(new FileReader(p.get("O")));
 					String s2 = br1.readLine();
 					while (s2 != null) {
+						s2 = App.csvLineToTSVLine(s2);
 						results += s2 + "\n";
 						s2 = br1.readLine();
 					}

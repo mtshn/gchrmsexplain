@@ -57,14 +57,14 @@ public class AppSingleSpectrumGUI {
 		Image image = new ImageIcon(AppBatchGUI.iconPNGPath()).getImage();
 		frame.setIconImage(image);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(600, 400);
+		frame.setSize(600, 600);
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 600, 1000);
 		panel.setPreferredSize(new Dimension(550, 1000));
 		panel.setLayout(null);
 		JScrollPane scrollPane = new JScrollPane(panel);
 		scrollPane.setLayout(new ScrollPaneLayout());
-		scrollPane.setPreferredSize(new Dimension(500, 400));
+		scrollPane.setPreferredSize(new Dimension(500, 600));
 
 		JLabel label1 = new JLabel("SMILES or InChI string (structure of molecule):");
 		JTextField tf1 = new JTextField("");
@@ -112,10 +112,15 @@ public class AppSingleSpectrumGUI {
 						}
 					}
 					App.run(p);
-					String results = "Brief explanation results \n";
+					String results = "";
+					results += "************************************************************\n";
+					results += "*COPY CONTENT OF THIS FIELD TO MS Excel or LibreOffice Calc*\n";
+					results += "************************************************************\n";
+					results += "Brief explanation results \n";
 					BufferedReader br = new BufferedReader(new FileReader(p.get("O1")));
 					String s1 = br.readLine();
 					while (s1 != null) {
+						s1 = App.csvLineToTSVLine(s1);
 						results += s1 + "\n";
 						s1 = br.readLine();
 					}
@@ -124,6 +129,7 @@ public class AppSingleSpectrumGUI {
 					BufferedReader br1 = new BufferedReader(new FileReader(p.get("O")));
 					String s2 = br1.readLine();
 					while (s2 != null) {
+						s2 = App.csvLineToTSVLine(s2);
 						results += s2 + "\n";
 						s2 = br1.readLine();
 					}

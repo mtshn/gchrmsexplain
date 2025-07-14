@@ -1,14 +1,16 @@
 package ru.ac.phyche.gchrmsexplain;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openscience.cdk.exception.CDKException;
 
@@ -200,7 +202,7 @@ public class MassSpectrumHR {
 	 */
 	public static MassSpectrumHR fromSimpleMZTableFile(String filename, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filename));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
 		String s = br.readLine();
 		String merged = "";
 		while (s != null) {
@@ -250,7 +252,7 @@ public class MassSpectrumHR {
 	 */
 	public static Pair<MassSpectrumHR, String[]> fromMSPFile(String filename, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filename));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
 		String s = br.readLine();
 		String msp = "";
 		boolean go = true;
@@ -406,7 +408,7 @@ public class MassSpectrumHR {
 	 */
 	public static MassSpectrumHR fromAnyCSVFile(String filename, float thresholdBy999, float thresholdGenerateIsotopic,
 			int csvColumnMZ, int csvColumnIntens, String header, char separator) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filename));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
 		String s = br.readLine();
 		while (!s.trim().trim().equals(header)) {
 			s = br.readLine();

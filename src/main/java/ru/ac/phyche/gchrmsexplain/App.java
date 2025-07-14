@@ -1,16 +1,18 @@
 package ru.ac.phyche.gchrmsexplain;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.tuple.Pair;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.aromaticity.Aromaticity;
@@ -53,7 +55,8 @@ public class App {
 
 	public static HashMap<String, String> loadProperties(HashMap<String, String> defaultProp, String filename)
 			throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filename));
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
 		String s = br.readLine();
 		HashMap<String, String> result = new HashMap<String, String>();
 		if (defaultProp != null) {
@@ -144,6 +147,15 @@ public class App {
 		return smiles;
 	}
 
+	public static String csvLineToTSVLine(String csv) {
+		String[] split = splitCSV(csv, ',');
+		String result = "";
+		for (int i = 0; i < split.length; i++) {
+			result += split[i].replace('\t', ' ').trim() + "\t";
+		}
+		return result;
+	}
+
 	public static String[] splitCSV(String s, char separator) {
 		ArrayList<String> r = new ArrayList<String>();
 		int i = 0;
@@ -183,7 +195,8 @@ public class App {
 			String fileFormat, String csvSpectrumHeader, int mzColumn, int intensColumn, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException, CDKException {
 		ArrayList<String> al = new ArrayList<String>();
-		BufferedReader br = new BufferedReader(new FileReader(csvFileWithFilenames));
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new BOMInputStream(new FileInputStream(csvFileWithFilenames))));
 		String s = br.readLine();
 		while (s != null) {
 			if (!s.trim().equals("")) {
@@ -247,7 +260,9 @@ public class App {
 
 	public static Pair<MassSpectrumHR, String[]>[] loadMSPWithSMILESorINCHI(String filename, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException, CDKException {
-		BufferedReader br = new BufferedReader(new FileReader(filename));
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
+
 		String s = br.readLine();
 		ArrayList<Pair<MassSpectrumHR, String[]>> rslt = new ArrayList<Pair<MassSpectrumHR, String[]>>();
 		while (s != null) {
@@ -277,7 +292,8 @@ public class App {
 
 	public static Pair<MassSpectrumHR, String[]>[] loadSDFNIST(String filename, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException, CDKException {
-		BufferedReader br = new BufferedReader(new FileReader(filename));
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
 		String s = br.readLine();
 		ArrayList<Pair<MassSpectrumHR, String[]>> rslt = new ArrayList<Pair<MassSpectrumHR, String[]>>();
 		while (s != null) {
@@ -350,6 +366,9 @@ public class App {
 	 * @throws IOException io
 	 */
 	public static String fileNameToPathSameDirAsJARLocated(String filename) {
+		// return filename; 
+		// This function works only if JAR archive is runned.
+		// If the project runned from IDE this method is cause strange error
 		try {
 			File jarPath = (new File(URLDecoder
 					.decode(App.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8")))
