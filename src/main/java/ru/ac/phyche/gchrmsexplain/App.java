@@ -351,11 +351,10 @@ public class App {
 	 */
 	public static String fileNameToPathSameDirAsJARLocated(String filename) {
 		try {
-			String defaultPropFile = "./properties.txt";
 			File jarPath = (new File(URLDecoder
 					.decode(App.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8")))
 					.getParentFile();
-			return (new File(jarPath, defaultPropFile)).getAbsolutePath();
+			return (new File(jarPath, filename)).getAbsolutePath();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
