@@ -15,11 +15,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneLayout;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -78,8 +82,20 @@ public class AppSingleSpectrumGUI {
 		panel.add(label2);
 
 		JTextArea input = new JTextArea();
-		input.setBounds(10, 125, 550, 200);
-		panel.add(input);
+		JScrollPane sp = new JScrollPane(input);
+		sp.setBounds(10, 125, 550, 200);
+		panel.add(sp);
+		JPopupMenu popupMenu = new JPopupMenu();
+		JMenuItem copyMenuItem = new JMenuItem("Copy");
+		JMenuItem selectAllMenuItem = new JMenuItem("Select All");
+		copyMenuItem.addActionListener(new DefaultEditorKit.CopyAction());
+		final JTextArea p1 = input;
+		selectAllMenuItem.addActionListener(e -> {
+			((JTextComponent) p1).selectAll();
+		});
+		popupMenu.add(copyMenuItem);
+		popupMenu.add(selectAllMenuItem);
+		input.setComponentPopupMenu(popupMenu);
 
 		ExtractProperties propertiesExtractMS = AppBatchGUI.addMSproperties(panel, 10, 335);
 
