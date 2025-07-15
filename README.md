@@ -1,3 +1,22 @@
+## Download here: https://github.com/mtshn/gchrmsexplain/releases/
+
+First release of software for intepreting and explaining high resolution GC-MS mass spectra.
+**Attention!!!** Resolution and mass determination accuracy should be set for your mass spectrometer based on its capabilities. Be sure to set parameters, do not use default parameters. In general, it is strongly recommended to use the command line interface, not the graphical user interface (GUI), if possible.
+
+* Documentation is in the **help** folder (and also below). Please read it before running!
+* Command line interface - **command_line_interface** folder, **explain_cli.bat** or **explain_cli.sh** file; Examples of using: **examples_cli.bat** or **examples_cli.sh**; To see a brief help on the options, type **explain_cli --help**
+* Batch GUI **explain_batch.bat** or **explain_batch.sh**
+* Simple GUI **explain.bat** or **explain.sh**
+* Examples of input files are in the **example_input** folder, which in turn is in the **gchrmsexplain** folder
+* Examples of mass spectrum files are in the **example_spectra** folder, which in turn is in the **gchrmsexplain** folder
+
+Files for Winodws have the **bat** extension, for Linux **sh**.
+The program must have the premissions to create temporary files in the folder where it is launched.
+
+The Windows distribution contains Java Runtime Environment. In the case of Linux, Java Runtime Environment must be installed and run with the "java" command!
+
+The input file (in case each spectrum is in a separate file) must be in CSV (comma separated file) format, NOT in Excel format. Use the "save as" option and be sure to select the format, or better yet, create it in a text editor (notepad). If you have any questions, feel free write us: shonastya@yandex.ru, dm.matiushin@mail.ru.
+
 # Software for the interpretation of high-resolution mass spectra in gas chromatography
 
 ## 1. Introduction
