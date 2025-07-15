@@ -87,13 +87,19 @@ public class AppSingleSpectrumGUI {
 		panel.add(sp);
 		JPopupMenu popupMenu = new JPopupMenu();
 		JMenuItem copyMenuItem = new JMenuItem("Copy");
+		JMenuItem pasteMenuItem = new JMenuItem("Paste");
+		JMenuItem cutMenuItem = new JMenuItem("Cut");
 		JMenuItem selectAllMenuItem = new JMenuItem("Select All");
 		copyMenuItem.addActionListener(new DefaultEditorKit.CopyAction());
+		pasteMenuItem.addActionListener(new DefaultEditorKit.PasteAction());
+		cutMenuItem.addActionListener(new DefaultEditorKit.CutAction());
 		final JTextArea p1 = input;
 		selectAllMenuItem.addActionListener(e -> {
 			((JTextComponent) p1).selectAll();
 		});
 		popupMenu.add(copyMenuItem);
+		popupMenu.add(pasteMenuItem);
+		popupMenu.add(cutMenuItem);
 		popupMenu.add(selectAllMenuItem);
 		input.setComponentPopupMenu(popupMenu);
 
