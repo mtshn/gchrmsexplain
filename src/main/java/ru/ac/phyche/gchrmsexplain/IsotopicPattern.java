@@ -349,7 +349,7 @@ public class IsotopicPattern {
 
 	/**
 	 * Absolutely the same as isotopicPattern, but for cation. The difference is
-	 * mass of electron: 0.0005 Da.
+	 * mass of electron: 0.00054858 Da.
 	 * 
 	 * @param elements  atomic numbers
 	 * @param numbers   numbers of atoms
@@ -362,7 +362,7 @@ public class IsotopicPattern {
 		HashMap<Float, Float> r1 = result.fractionByMZ;
 		HashMap<Float, Float> r2 = new HashMap<Float, Float>();
 		for (Float mz : r1.keySet()) {
-			r2.put(mz - 0.00055f, r1.get(mz));
+			r2.put(mz - 0.00054858f, r1.get(mz));
 		}
 		result.fractionByMZ = r2;
 		return result;
