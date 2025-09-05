@@ -94,6 +94,9 @@ public class IsotopicPattern {
 		if (n == 1) {
 			return ("H");
 		}
+		if (n == 5) {
+			return ("B");
+		}
 		if (n == 6) {
 			return ("C");
 		}
@@ -145,6 +148,9 @@ public class IsotopicPattern {
 	public static int atomicNumberBySymbol(String s) {
 		if (s.equals("H")) {
 			return 1;
+		}
+		if (s.equals("B")) {
+			return 5;
 		}
 		if (s.equals("C")) {
 			return 6;
@@ -277,6 +283,10 @@ public class IsotopicPattern {
 		if (el == 53) {// I
 			result.fractionByMZ.put(126.9044719f, 1f);
 		}
+
+		if (result.fractionByMZ.isEmpty()) {
+			throw new RuntimeException("Unsupported element! " + el);
+		}
 		return result;
 	}
 
@@ -320,6 +330,7 @@ public class IsotopicPattern {
 		}
 		return result;
 	}
+
 	/**
 	 * 
 	 * @return the m/z with the most abundant intensity
@@ -336,11 +347,14 @@ public class IsotopicPattern {
 		return maxMZ;
 	}
 
-	/** 
-	 * Absolutely the same as isotopicPattern, but for cation. The difference is mass of electron: 0.0005 Da.
-	 * @param elements atomic numbers
-	 * @param numbers numbers of atoms
-	 * @param threshold (fragment ions with fraction of total current below threshold are excluded)
+	/**
+	 * Absolutely the same as isotopicPattern, but for cation. The difference is
+	 * mass of electron: 0.0005 Da.
+	 * 
+	 * @param elements  atomic numbers
+	 * @param numbers   numbers of atoms
+	 * @param threshold (fragment ions with fraction of total current below
+	 *                  threshold are excluded)
 	 * @return pattern
 	 */
 	public static IsotopicPattern isotopicPatternSingleCation(int[] elements, int[] numbers, float threshold) {
@@ -348,7 +362,7 @@ public class IsotopicPattern {
 		HashMap<Float, Float> r1 = result.fractionByMZ;
 		HashMap<Float, Float> r2 = new HashMap<Float, Float>();
 		for (Float mz : r1.keySet()) {
-			r2.put(mz - 0.0005f, r1.get(mz));
+			r2.put(mz - 0.00055f, r1.get(mz));
 		}
 		result.fractionByMZ = r2;
 		return result;
@@ -356,8 +370,9 @@ public class IsotopicPattern {
 
 	/**
 	 * Formula like C4H10
+	 * 
 	 * @param elements atomic numbers
-	 * @param numbers numbers of atoms
+	 * @param numbers  numbers of atoms
 	 * @return formula
 	 */
 	public static String formulaString(int[] elements, int[] numbers) {
@@ -365,7 +380,7 @@ public class IsotopicPattern {
 		for (int j = 0; j < 100; j++) {
 			for (int i = 0; i < elements.length; i++) {
 				if (elements[i] == j) {
-					result += symbolByAtomicNumber(elements[i]) + numbers[i];
+					result += symbolByAtomicNumber(elements[i]) + (numbers[i] == 1 ? "" : numbers[i]);
 				}
 			}
 		}

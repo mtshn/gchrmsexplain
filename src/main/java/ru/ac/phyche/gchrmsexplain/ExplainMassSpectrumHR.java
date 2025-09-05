@@ -1,17 +1,12 @@
 package ru.ac.phyche.gchrmsexplain;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import ru.ac.phyche.gchrmsexplain.MassSpectrumHR.PeakExplained;
-import ru.ac.phyche.gchrmsexplain.NISTDataBase.SearchResult;
 
 /**
  * The class interprets the mass spectrum using the explainPeaks method
@@ -122,90 +117,6 @@ public class ExplainMassSpectrumHR {
 			}
 		}
 		return result;
-	}
-
-	private static float[] explainCSVFileSpectrum(String filename, String smiles, FileWriter outputFile,
-			HashMap<String, String> properties) throws IOException {
-		MassSpectrumHR x = MassSpectrumHR.fromThermoCSVFile(filename,
-				Float.parseFloat(properties.get("csvLoadIntensityThreshold")),
-				Float.parseFloat(properties.get("thresholdGenerateIsotopic")));
-		String name = "";
-		Pair<MassSpectrumHR, String[]> spectrumNameSmiles = Pair.of(x, new String[] { smiles, name });
-		return explainSpectrum(spectrumNameSmiles, filename, outputFile, properties);
-	}
-
-	/**
-	 * Explain mass spectrum and search in NIST database
-	 * 
-	 * @param csvFilePath     mass spectrum in "thermo" format
-	 * @param compoundName    name
-	 * @param smiles          structure
-	 * @param properties      properties hash table (see other similar methods)
-	 * @param shortTable      filewriter (obligatory open and non-zero!) where log
-	 *                        will be written
-	 * @param fullExplanation filewriter (obligatory open and non-zero!) where log
-	 *                        will be written
-	 * @param fwSearchResult  filewriter (obligatory open and non-zero!) where log
-	 *                        will be written (NIST search)
-	 * @param noNistSearch    disable nist search
-	 * @param nist            NIST MS database in own format, see NISTDataBase class
-	 */
-	private static void explainAndSearch(String csvFilePath, String compoundName, String smiles,
-			HashMap<String, String> properties, FileWriter shortTable, FileWriter fullExplanation,
-			FileWriter fwSearchResult, boolean noNistSearch, NISTDataBase nist) {
-		String name = compoundName;
-		String shortFileName = (new File(csvFilePath)).getName();
-		System.out.println(shortFileName);
-		try {
-			float csvLoadTreshold = Float.parseFloat(properties.get("csvLoadIntensityThreshold"));
-			boolean nistSearch = (!noNistSearch) && (fwSearchResult != null) && (nist != null);
-			float foundMF2 = 0;
-			int foundRank = -1;
-			if (nistSearch) {
-				MassSpectrumLR x = MassSpectrumHR
-						.fromThermoCSVFile(csvFilePath, 1E-6f,
-								Float.parseFloat(properties.get("thresholdGenerateIsotopic")))
-						.toLowResolution(csvLoadTreshold);
-				SearchResult[] sr = nist.search(x, Integer.parseInt(properties.get("maxSearchRank")));
-				String inchikey = ParsingNIST23.smilesToInchiKey(smiles);
-				fwSearchResult.write("\"" + name + "\"," + smiles + ",\"" + shortFileName + "\"\n");
-				for (int k = 0; k < sr.length; k++) {
-					if (inchikey.equals(sr[k].result.getIds().inchiKeyNist)) {
-						foundRank = k;
-					}
-					fwSearchResult.write(k + "," + sr[k].similarity + "," + sr[k].result.toStringFull() + "\n");
-				}
-				fwSearchResult.write("\n\n");
-				foundMF2 = nist.compoundInDatabaseMatchFactor(smiles, x);
-			}
-			MassSpectrumHR y = MassSpectrumHR.fromThermoCSVFile(csvFilePath, csvLoadTreshold,
-					Float.parseFloat(properties.get("thresholdGenerateIsotopic")));
-			float[] result = explainCSVFileSpectrum(csvFilePath, smiles, fullExplanation, properties);
-			int[] molecularIon = y.findMolecularIon(smiles, properties, fullExplanation);
-			int molecularIonLR = y.findMolecularIonIntegerMass(smiles, fullExplanation);
-			float fractionAboveMolecular = y.fractionIonsAboveMolecularIon(smiles);
-			int molecularIonBestLevel = Math.max(molecularIon[0], Math.max(molecularIon[1], molecularIon[2]));
-			String explanationRates = "";
-			for (int k = 0; k < result.length; k++) {
-				explanationRates += result[k] + ",";
-			}
-			String molecularIonLevels = "";
-			for (int k = 0; k < molecularIon.length; k++) {
-				molecularIonLevels += molecularIon[k] + ",";
-			}
-			String nistStringResult = nistSearch ? (foundRank + 1) + "," + foundMF2 : "";
-			shortTable.write("\"" + name + "\",\"" + shortFileName + "\"," + smiles + "," + nistStringResult + ","
-					+ molecularIonBestLevel + "," + molecularIonLR + "," + fractionAboveMolecular + ","
-					+ explanationRates + "," + molecularIonLevels + "\n");
-		} catch (Throwable e) {
-			try {
-				shortTable.write("\"" + name + "\",\"" + shortFileName + "\"," + smiles
-						+ ",Cannot process spectrum! Exception\n");
-			} catch (Exception e1) {
-				throw new RuntimeException(e1.getMessage());
-			}
-			e.printStackTrace();
-		}
 	}
 
 }

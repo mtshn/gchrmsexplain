@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Random;
 import java.io.FileReader;
 
-
 public class NISTDataBase {
 	private MassSpectrumLR[] data = null;
 
@@ -72,6 +71,25 @@ public class NISTDataBase {
 			for (int i = 0; i < data.length; i++) {
 				if (data[i].getIds().inchiKeyNist.equals(inchikey)) {
 					return querySpectrum.identity(data[i]);
+				}
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -100;
+		}
+	}
+
+	public float compoundInDatabaseMatchFactorStereosiomersAsEqual(String smiles, MassSpectrumLR querySpectrum) {
+		try {
+			String inchikey = ParsingNIST23.smilesToInchiKey(smiles);
+			float result = -1;
+			for (int i = 0; i < data.length; i++) {
+				if (data[i].getIds().inchiKeyNist.split("\\-")[0].equals(inchikey.split("\\-")[0])) {
+					float matchFactor = querySpectrum.identity(data[i]);
+					if (matchFactor > result) {
+						result = matchFactor;
+					}
 				}
 			}
 			return result;

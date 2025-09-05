@@ -115,9 +115,11 @@ public class MolGraph {
 	public int nMethyls(boolean atomsIncluded[]) {
 		int nCH3 = 0;
 		for (int i = 0; i < elementAtomicNumber.length; i++) {
-			if (nHydrogens[i] == 3) {
-				if (atomsIncluded[i]) {
-					nCH3++;
+			if (elementAtomicNumber[i] == 6) {
+				if (nHydrogens[i] == 3) {
+					if (atomsIncluded[i]) {
+						nCH3++;
+					}
 				}
 			}
 		}
@@ -569,44 +571,57 @@ public class MolGraph {
 		int nHAll = nHAll();
 		result.add(new FragmentIon(f));
 		for (int element : new int[] { 17, 35, 53 }) {
-			if (f.get(element) != null) {
-				if (f.get(element) > 0) {
-					HashMap<Integer, Integer> f1 = clone(f);
-					f1.put(element, f.get(element) - 1);
-					FragmentIon fi = new FragmentIon(f1);
-					if (fi.elementNumbers.length != 0) {
-						result.add(fi);
+			@SuppressWarnings("unchecked")
+			ArrayList<FragmentIon> tmp = (ArrayList<FragmentIon>) result.clone();
+			for (FragmentIon a : tmp) {
+				HashMap<Integer, Integer> f1 = clone(a.asMap());
+				if (f1.get(element) != null) {
+					if (f1.get(element) > 0) {
+						f1.put(element, f.get(element) - 1);
+						FragmentIon fi = new FragmentIon(f1);
+						if (fi.elementNumbers.length != 0) {
+							result.add(fi);
+						}
 					}
 				}
 			}
 		}
 
 		if (this.nMethyls(atomsIncluded) > 0) {
-			HashMap<Integer, Integer> f1 = clone(f);
-			if ((f1.get(6) < 1) || (f1.get(1) < 3)) {
-				throw new RuntimeException("Unknown error. Should be methyl group here!");
+			@SuppressWarnings("unchecked")
+			ArrayList<FragmentIon> tmp = (ArrayList<FragmentIon>) result.clone();
+			for (FragmentIon a : tmp) {
+				HashMap<Integer, Integer> f1 = clone(a.asMap());
+				if ((f1.get(6) < 1) || (f1.get(1) < 3)) {
+					throw new RuntimeException("Unknown error. Should be methyl group here!");
+				}
+				if (!f1.get(6).equals(1)) {
+					f1.put(6, f.get(6) - 1);
+					f1.put(1, f.get(1) - 3);
+				}
+				result.add(new FragmentIon(f1));
 			}
-			if (!f1.get(6).equals(1)) {
-				f1.put(6, f.get(6) - 1);
-				f1.put(1, f.get(1) - 3);
-			}
-			result.add(new FragmentIon(f1));
 		}
 		int nNitro = this.nNitros(atomsIncluded);
 		if (nNitro > 0) {
-			HashMap<Integer, Integer> f1 = clone(f);
-			if ((f1.get(7) < nNitro) || (f1.get(8) < 2 * nNitro)) {
-				throw new RuntimeException("Unknown error. Should be nitro groups here!");
-			}
-			if (f1.get(6) != null) {
-				if (!f1.get(6).equals(0)) {
-					for (int j = 1; j < nNitro + 1; j++) {
-						f1.put(7, f.get(7) - j);
-						f1.put(8, f.get(8) - j);
+			@SuppressWarnings("unchecked")
+			ArrayList<FragmentIon> tmp = (ArrayList<FragmentIon>) result.clone();
+			for (FragmentIon a : tmp) {
+				HashMap<Integer, Integer> f1 = clone(a.asMap());
+				if ((f1.get(7) < nNitro) || (f1.get(8) < 2 * nNitro)) {
+					throw new RuntimeException("Unknown error. Should be nitro groups here!");
+				}
+				if (f1.get(6) != null) {
+					if (!f1.get(6).equals(0)) {
+						for (int j = 1; j < nNitro + 1; j++) {
+							HashMap<Integer, Integer> f2 = clone(f1);
+							f2.put(7, f1.get(7) - j);
+							f2.put(8, f1.get(8) - j);
+							result.add(new FragmentIon(f2));
+						}
 					}
 				}
 			}
-			result.add(new FragmentIon(f1));
 		}
 		@SuppressWarnings("unchecked")
 		ArrayList<FragmentIon> tmp = (ArrayList<FragmentIon>) result.clone();
@@ -794,6 +809,7 @@ public class MolGraph {
 
 	/**
 	 * From smiles
+	 * 
 	 * @param smiles SMILES string, structure
 	 */
 	public MolGraph(String smiles) {
@@ -870,7 +886,8 @@ public class MolGraph {
 
 	/**
 	 * 
-	 * @return Possible variations in the number of hydrogens during the formation of a fragment ion
+	 * @return Possible variations in the number of hydrogens during the formation
+	 *         of a fragment ion
 	 */
 	public int[] getPossibleHChangeFragment() {
 		return possibleHChangeFragment;
@@ -878,7 +895,8 @@ public class MolGraph {
 
 	/**
 	 * 
-	 * @param possibleHChangeFragment Possible variations in the number of hydrogens during the formation of a fragment ion
+	 * @param possibleHChangeFragment Possible variations in the number of hydrogens
+	 *                                during the formation of a fragment ion
 	 */
 	public void setPossibleHChangeFragment(int[] possibleHChangeFragment) {
 		this.possibleHChangeFragment = possibleHChangeFragment;

@@ -64,8 +64,13 @@ public class MassSpectrumHR {
 	 */
 	public static MassSpectrumHR fromThermoCSVFile(String filename, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException {
-		return fromAnyCSVFile(filename, thresholdBy999, thresholdGenerateIsotopic, 1, 3,
-				"Scan Number,m/z,Intensity,Relative,Segment Number,Flags", ',');
+		try {
+			return fromAnyCSVFile(filename, thresholdBy999, thresholdGenerateIsotopic, 1, 3,
+					"Scan Number,m/z,Intensity,Relative,Segment Number,Flags", ',');
+		} catch (Throwable e) {
+			return fromAnyCSVFile(filename, thresholdBy999, thresholdGenerateIsotopic, 1, 2,
+					"Scan Number,m/z,Relative,Segment Number,Flags", ',');
+		}
 	}
 
 	/**
@@ -96,6 +101,78 @@ public class MassSpectrumHR {
 	public static MassSpectrumHR fromSimpleCSVFile(String filename, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException {
 		return fromAnyCSVFile(filename, thresholdBy999, thresholdGenerateIsotopic, 0, 1, "m/z,Intensity", ',');
+	}
+
+	private interface MZtester {
+		boolean test(float mz);
+	}
+
+	/**
+	 * This method removes from THIS spectrum all peaks larger than the molecular
+	 * ion, except for specially allowed ones. Isotopic peaks of the molecular ion
+	 * are also not removed.
+	 * 
+	 * @param smiles           proposed structure of the molecule (SMILES)
+	 * @param permittedAdducts list of m/z's that are allowed and not removed, even
+	 *                         if they are greater than the molecular m/z.
+	 * @param permittedMZ      List of exact masses that can be added to a molecular
+	 *                         ion (and are not removed by this function) For
+	 *                         example, if the m/z of a molecular ion is M and OH is
+	 *                         added to it (with mass M_OH), then the ion M+M_OH is
+	 *                         not removed. M_OH must be in this array! The isotopic
+	 *                         distribution of the molecular ion is taken into
+	 *                         account
+	 * @param mzThreshold      mass determination accuracy in high resolution mass
+	 *                         spectrometry
+	 */
+	public void cutMZAboveMolecularIon(String smiles, float[] permittedAdducts, float[] permittedMZ,
+			float mzThreshold) {
+		MolGraph m = new MolGraph(smiles);
+		HashMap<Integer, Integer> mf = m.molecularFormulaFragment(m.markAllAtoms());
+		IsotopicPattern ip = (new FragmentIon(mf)).isotopicPatternSingleCation(thresholdGenerateIsotopic);
+		float maxmz = 0;
+		for (float mz : ip.asMap().keySet()) {
+			if (maxmz < mz) {
+				maxmz = mz;
+			}
+		}
+		ArrayList<Float> permittedMZFullList = new ArrayList<Float>();
+		for (float mz : permittedMZ) {
+			permittedMZFullList.add(mz);
+		}
+		for (float mz : ip.asMap().keySet()) {
+			for (float mz1 : permittedAdducts) {
+				permittedMZFullList.add(mz + mz1);
+			}
+		}
+		final float maxmz2 = maxmz;
+		MZtester mzTester = new MZtester() {
+			public boolean test(float mz) {
+				if (mz < (maxmz2 + 1.5f)) {
+					return true;
+				}
+				for (float mz1 : permittedMZFullList) {
+					if (Math.abs(mz - mz1) < mzThreshold) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		ArrayList<Float> acceptedMZs = new ArrayList<Float>();
+		ArrayList<Float> acceptedIntensities = new ArrayList<Float>();
+		for (int i = 0; i < this.mzs.length; i++) {
+			if (mzTester.test(mzs[i])) {
+				acceptedMZs.add(mzs[i]);
+				acceptedIntensities.add(intensities[i]);
+			}
+		}
+		this.mzs = new float[acceptedMZs.size()];
+		this.intensities = new float[acceptedMZs.size()];
+		for (int i = 0; i < this.mzs.length; i++) {
+			mzs[i] = acceptedMZs.get(i);
+			intensities[i] = acceptedIntensities.get(i);
+		}
 	}
 
 	/**
@@ -202,7 +279,8 @@ public class MassSpectrumHR {
 	 */
 	public static MassSpectrumHR fromSimpleMZTableFile(String filename, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
 		String s = br.readLine();
 		String merged = "";
 		while (s != null) {
@@ -252,7 +330,8 @@ public class MassSpectrumHR {
 	 */
 	public static Pair<MassSpectrumHR, String[]> fromMSPFile(String filename, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
 		String s = br.readLine();
 		String msp = "";
 		boolean go = true;
@@ -301,7 +380,7 @@ public class MassSpectrumHR {
 	public static Pair<MassSpectrumHR, String[]> fromMSPBlock(String msp, float thresholdBy999,
 			float thresholdGenerateIsotopic) throws IOException {
 
-		String[] splt = msp.trim().split("[\\r?\\n|\\r;]");
+		String[] splt = msp.trim().split("(\\r\\n|\\n|;)");
 		HashMap<String, String> fields = new HashMap<String, String>();
 		if (!splt[0].toUpperCase().split(":")[0].toLowerCase().equals("name")) {
 			throw new RuntimeException(
@@ -338,6 +417,7 @@ public class MassSpectrumHR {
 			for (String s2 : fields.keySet()) {
 				if (s2.equals("comments")) {
 					String comments = fields.get(s2.trim()).trim();
+
 					// Mass bank-style comment in MSP file.
 					if ((comments.charAt(0) == '"') && (comments.charAt(comments.length() - 1) == '"')) {
 						String[] split3 = ("\" " + comments + " \"").split("\"\\s+\"");
@@ -408,7 +488,8 @@ public class MassSpectrumHR {
 	 */
 	public static MassSpectrumHR fromAnyCSVFile(String filename, float thresholdBy999, float thresholdGenerateIsotopic,
 			int csvColumnMZ, int csvColumnIntens, String header, char separator) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
+		BufferedReader br = new BufferedReader(
+				new InputStreamReader(new BOMInputStream(new FileInputStream(filename))));
 		String s = br.readLine();
 		while (!s.trim().trim().equals(header)) {
 			s = br.readLine();
@@ -976,8 +1057,11 @@ public class MassSpectrumHR {
 		MolGraph m = new MolGraph(smiles);
 		HashMap<Integer, Integer> mf = m.molecularFormulaFragment(m.markAllAtoms());
 		ArrayList<IsotopicPattern> mi = new ArrayList<IsotopicPattern>();
+		if (mf.get(1) == null) {
+			mf.put(1, 0);
+		}
 		for (int i = 0; i < maxHLostMI + 1; i++) {
-			if (mf.get(1) - i >= 0) {
+			if ((mf.get(1) != null) && (mf.get(1) - i >= 0)) {
 				@SuppressWarnings("unchecked")
 				HashMap<Integer, Integer> mf1 = (HashMap<Integer, Integer>) mf.clone();
 				mf1.put(1, mf.get(1) - i);
@@ -1073,7 +1157,9 @@ public class MassSpectrumHR {
 			count++;
 			for (String x : outWrite) {
 				try {
-					fw.write(x + "\n");
+					if (fw != null) {
+						fw.write(x + "\n");
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 					throw new RuntimeException(e.getMessage());
